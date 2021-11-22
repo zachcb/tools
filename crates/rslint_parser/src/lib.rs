@@ -73,6 +73,7 @@ mod tests;
 
 #[macro_use]
 pub mod ast;
+pub mod make;
 pub mod syntax;
 pub mod util;
 
