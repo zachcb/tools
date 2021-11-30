@@ -9,6 +9,7 @@ use crate::syntax::class::class_declaration;
 use crate::syntax::class::parse_class_declaration;
 use crate::syntax::function::parse_function_declaration;
 use crate::syntax::function::{is_at_async_function, parse_function_declaration, LineBreak};
+use crate::syntax::js_parse_error;
 use crate::syntax::object::parse_object_expression;
 use crate::syntax::stmt::directives;
 use crate::ConditionalParsedSyntax::{Invalid, Valid};

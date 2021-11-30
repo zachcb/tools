@@ -47,7 +47,6 @@ pub(super) fn class_expression(p: &mut Parser) -> CompletedMarker {
 /// A class can be invalid if
 /// * It uses an illegal identifier name
 pub(super) fn parse_class_declaration(p: &mut Parser) -> ConditionalParsedSyntax {
-	// TODO:: to remove `Present` when this file is moved to use `ParsedSyntax`
 	class(p, ClassKind::Declaration)
 }
 

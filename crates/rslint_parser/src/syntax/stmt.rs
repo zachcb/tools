@@ -144,6 +144,8 @@ pub fn parse_statement(
 		Absent => {
 			// We must explicitly handle this case or else infinite recursion can happen
 			if p.at_ts(token_set![T!['}'], T![import], T![export]]) {
+			// We must explicitly handle this case or else infinite recursion can happen
+			if p.at_ts(token_set![T!['}'], T![import], T![export]]) {
 				let err = p
 					.err_builder("Expected a statement or declaration, but found none")
 					.primary(
@@ -261,7 +263,7 @@ fn parse_expression_statement(p: &mut Parser) -> ParsedSyntax {
 
 			let m = expr.undo_completion(p);
 			p.bump_any();
-			parse_statement(p, None);
+			parse_statement(p, None).or_missing_with_error(p, js_parse_error::expected_statement);
 			return Present(m.complete(p, JS_LABELED_STATEMENT));
 		}
 		let m = expr.precede(p);
@@ -614,7 +616,7 @@ pub(crate) fn parse_statements(
 				}
 			}
 			_ => {
-				parse_statement(p, recovery_set);
+				parse_statement(p, recovery_set).or_missing_with_error(p, js_parse_error::expected_statement);
 			}
 		};
 	}
@@ -658,13 +660,14 @@ pub fn parse_if_statement(p: &mut Parser) -> ParsedSyntax {
 
 	// body
 	// allows us to recover from `if (true) else {}`
-	parse_statement(p, STMT_RECOVERY_SET.union(token_set![T![else]]));
+	parse_statement(p, STMT_RECOVERY_SET.union(token_set![T![else]]))
+		.or_missing_with_error(p, js_parse_error::expected_statement);
 
 	// else clause
 	if p.at(T![else]) {
 		let else_clause = p.start();
 		p.bump_any(); // bump else
-		parse_statement(p, None); // stmt(p).into_required();
+		parse_statement(p, None).or_missing_with_error(p, js_parse_error::expected_statement); // stmt(p).into_required();
 		else_clause.complete(p, JS_ELSE_CLAUSE);
 	} else {
 		p.missing();
@@ -683,7 +686,7 @@ pub fn parse_with_statement(p: &mut Parser) -> ParsedSyntax {
 	p.bump_any(); // with
 	parenthesized_expression(p);
 
-	parse_statement(p, None);
+	parse_statement(p, None).or_missing_with_error(p, js_parse_error::expected_statement);
 
 	let with_stmt = m.complete(p, JS_WITH_STATEMENT);
 
@@ -1076,7 +1079,7 @@ fn parse_switch_clause(
 			let mut progress = ParserProgress::default();
 			while !p.at_ts(token_set![T![default], T![case], T!['}'], EOF]) {
 				progress.assert_progressing(p);
-				parse_statement(p, None);
+				parse_statement(p, None).or_missing_with_error(p, js_parse_error::expected_statement);
 			}
 			cons_list.complete(p, LIST);
 			let default = m.complete(p, syntax_kind);
@@ -1105,7 +1108,7 @@ fn parse_switch_clause(
 
 			while !p.at_ts(token_set![T![default], T![case], T!['}'], EOF]) {
 				progress.assert_progressing(p);
-				parse_statement(p, None);
+				parse_statement(p, None).or_missing_with_error(p, js_parse_error::expected_statement);
 			}
 			cons_list.complete(p, LIST);
 			Present(m.complete(p, JS_CASE_CLAUSE))
