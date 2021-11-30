@@ -97,3 +97,7 @@ pub(crate) fn expected_statement(p: &Parser, range: Range<usize>) -> Diagnostic 
 pub(crate) fn expected_binding(p: &Parser, range: Range<usize>) -> Diagnostic {
 	expected_any(&["identifier", "array pattern", "object pattern"], range).to_diagnostic(p)
 }
+
+pub(crate) fn expected_object_expression(p: &Parser, range: Range<usize>) -> Diagnostic {
+	expected_node("object expression", range).to_diagnostic(p)
+}
