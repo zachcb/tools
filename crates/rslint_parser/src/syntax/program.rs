@@ -6,7 +6,6 @@ use super::stmt::{parse_statements, semi, variable_declaration_statement};
 use super::typescript::*;
 use crate::parser::ParserProgress;
 use crate::syntax::class::parse_class_declaration;
-use crate::syntax::class::parse_class_declaration;
 use crate::syntax::function::parse_function_declaration;
 use crate::syntax::function::{is_at_async_function, parse_function_declaration, LineBreak};
 use crate::syntax::js_parse_error;

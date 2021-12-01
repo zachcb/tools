@@ -780,6 +780,8 @@ fn parse_variable_declaration(p: &mut Parser, no_semi: bool) -> ParsedSyntax {
 		_ => {
 			m.abandon(p);
 			return Absent;
+			m.abandon(p);
+			return Absent;
 		}
 	}
 

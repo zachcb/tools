@@ -5,7 +5,7 @@ use crate::syntax::decl::parse_parameter_list;
 use crate::syntax::js_parse_error;
 use crate::syntax::stmt::{is_semi, parse_block_impl};
 use crate::syntax::typescript::{ts_type_or_type_predicate_ann, ts_type_params};
-use crate::syntax::util::is_at_async_function;
+use crate::syntax::util::{is_at_async_function, LineBreak};
 use crate::ConditionalParsedSyntax::Invalid;
 use crate::JsSyntaxFeature::TypeScript;
 use crate::ParsedSyntax::{Absent, Present};
