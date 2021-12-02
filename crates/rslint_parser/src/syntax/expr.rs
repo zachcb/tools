@@ -902,7 +902,7 @@ pub fn primary_expr(p: &mut Parser) -> Option<CompletedMarker> {
 			//  constructor() {}
 			// }
 			// foo[class {}]
-			class_expression(p)
+			class_expression(p).unwrap()
 		}
 		// test async_ident
 		// let a = async;

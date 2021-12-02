@@ -109,3 +109,11 @@ pub(crate) fn expected_statement(p: &Parser, range: Range<usize>) -> Diagnostic 
 pub(crate) fn expected_class_member(p: &Parser, range: Range<usize>) -> Diagnostic {
 	expected_any(&["semicolon (';')", "method for a class body"], range).to_diagnostic(p)
 }
+
+pub(crate) fn expected_class_parameters(p: &Parser, range: Range<usize>) -> Diagnostic {
+	expected_node("class parameters", range).to_diagnostic(p)
+}
+
+pub(crate) fn expected_class_body(p: &Parser, range: Range<usize>) -> Diagnostic {
+	expected_node("class body", range).to_diagnostic(p)
+}
