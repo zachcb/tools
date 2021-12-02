@@ -118,7 +118,7 @@ fn class(p: &mut Parser, kind: ClassKind) -> ConditionalParsedSyntax {
 	implements_clause(&mut guard);
 
 	guard.expect_required(T!['{']);
-	class_members(&mut *guard);
+	parse_class_members(&mut *guard).or_missing(&mut *guard);
 	guard.expect_required(T!['}']);
 
 	let completed = m.complete(&mut *guard, kind.into());
@@ -214,7 +214,7 @@ fn extends_clause(p: &mut Parser) {
 	m.complete(p, JS_EXTENDS_CLAUSE);
 }
 
-fn class_members(p: &mut Parser) -> CompletedMarker {
+fn parse_class_members(p: &mut Parser) -> ParsedSyntax {
 	let members = p.start();
 
 	let mut progress = ParserProgress::default();
@@ -223,7 +223,7 @@ fn class_members(p: &mut Parser) -> CompletedMarker {
 		class_member(p);
 	}
 
-	members.complete(p, LIST)
+	Present(members.complete(p, LIST))
 }
 
 fn class_member(p: &mut Parser) -> CompletedMarker {
