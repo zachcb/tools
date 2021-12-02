@@ -98,14 +98,6 @@ pub(crate) fn expected_binding(p: &Parser, range: Range<usize>) -> Diagnostic {
 	expected_any(&["identifier", "array pattern", "object pattern"], range).to_diagnostic(p)
 }
 
-pub(crate) fn expected_variable(p: &Parser, range: Range<usize>) -> Diagnostic {
-	expected_any(&["let", "const", "var"], range).to_diagnostic(p)
-}
-
-pub(crate) fn expected_statement(p: &Parser, range: Range<usize>) -> Diagnostic {
-	expected_node("statement", range).to_diagnostic(p)
-}
-
 pub(crate) fn expected_class_member(p: &Parser, range: Range<usize>) -> Diagnostic {
 	expected_any(&["semicolon (';')", "method for a class body"], range).to_diagnostic(p)
 }

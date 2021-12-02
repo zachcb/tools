@@ -13,17 +13,16 @@ use crate::syntax::typescript::{
 use crate::ConditionalParsedSyntax::{Invalid, Valid};
 use crate::ParsedSyntax::{Absent, Present};
 use crate::{
-	CompletedMarker, ConditionalParsedSyntax, Event, Marker, ParseRecovery, Parser, ParserState,
-	StrictMode, TokenSet,
+	ConditionalParsedSyntax, Event, Marker, ParseRecovery, Parser, ParserState, StrictMode,
+	TokenSet,
 };
-use crate::{Event, Marker, ParseRecovery, Parser, ParserState, StrictMode, TokenSet};
 use rslint_syntax::SyntaxKind::*;
 use rslint_syntax::{SyntaxKind, T};
 use std::ops::Range;
 
 /// Parses a class expression, e.g. let a = class {}
 pub(super) fn parse_class_expression(p: &mut Parser) -> ParsedSyntax {
-	parse_class(p, ClassKind::Expression)
+	parse_class(p, ClassKind::Expression).or_invalid_to_unknown(p, JS_UNKNOWN_EXPRESSION)
 }
 
 // test class_decl
@@ -63,9 +62,9 @@ impl From<ClassKind> for SyntaxKind {
 	}
 }
 
-fn parse_class(p: &mut Parser, kind: ClassKind) -> ParsedSyntax {
+fn parse_class(p: &mut Parser, kind: ClassKind) -> ConditionalParsedSyntax {
 	if !p.at(T![class]) {
-		return Absent;
+		return Valid(Absent);
 	}
 	let m = p.start();
 	let class_token = p.cur_tok().range;
@@ -191,10 +190,6 @@ fn extends_clause(p: &mut Parser) {
 		elems.remove(0).undo_completion(p).abandon(p)
 	}
 
-	// if !elems.is_empty() {
-	// 	p.missing();
-	// }
-
 	for elem in elems {
 		let err = p
 			.err_builder("classes cannot extend multiple classes")
@@ -231,7 +226,7 @@ fn parse_class_members(p: &mut Parser) -> ParsedSyntax {
 
 		let member_recovered = parse_class_member(p).or_recover(
 			p,
-			ParseRecovery::new(
+			&ParseRecovery::new(
 				JS_UNKNOWN_MEMBER,
 				token_set![T![;], T![ident], T![async], T![yield], T!['}'], T![#]],
 			),

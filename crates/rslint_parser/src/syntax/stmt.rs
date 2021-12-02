@@ -12,10 +12,9 @@ use crate::parser::{ParsedSyntax, ParserProgress};
 use crate::syntax::assignment_target::{
 	expression_to_assignment_target, SimpleAssignmentTargetExprKind,
 };
-use crate::syntax::class::class_declaration;
 use crate::syntax::class::{parse_class_declaration, parse_equal_value_clause};
 use crate::syntax::function::parse_function_declaration;
-use crate::syntax::function::{is_at_async_function, parse_function_declaration, LineBreak};
+use crate::syntax::function::{is_at_async_function, LineBreak};
 use crate::syntax::js_parse_error;
 use crate::syntax::js_parse_error::expected_binding;
 use crate::JsSyntaxFeature::StrictMode;
@@ -142,8 +141,6 @@ pub fn parse_statement(
 
 	match res {
 		Absent => {
-			// We must explicitly handle this case or else infinite recursion can happen
-			if p.at_ts(token_set![T!['}'], T![import], T![export]]) {
 			// We must explicitly handle this case or else infinite recursion can happen
 			if p.at_ts(token_set![T!['}'], T![import], T![export]]) {
 				let err = p
@@ -778,8 +775,6 @@ fn parse_variable_declaration(p: &mut Parser, no_semi: bool) -> ParsedSyntax {
 			is_let = true;
 		}
 		_ => {
-			m.abandon(p);
-			return Absent;
 			m.abandon(p);
 			return Absent;
 		}
